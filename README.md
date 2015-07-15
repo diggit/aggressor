@@ -60,9 +60,9 @@ Whole MCU is glued by 4 glue dots! Add a lot of solder on all pins, then heat it
 
 | VF header |	| ISP header |
 |-----------|	|-----------|
-|PPM|			|+5V|
-|VCC|			|MISO|
-|NC|			|RST|
-|GND|			|SOCKET|
-|ANT|			|MOSI|
-||				|GND|
+| PPM |			| +5V |
+| VCC |			| MISO |
+| NC |			| RST |
+| GND |			| SOCKET |
+| ANT |			| MOSI |
+||				| GND |
