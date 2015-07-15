@@ -23,15 +23,10 @@
 	#define OUTPUT_INMIX_COEF_MAX	10
 	#define OUTPUT_INMIX_COEF_MIN	(-OUTPUT_INMIX_COEF_MAX)
 
-	//how big part of whole track is track of subtrim, eg. 5 means subtrim can add-+1/5 of whole track as offset
-	#ifndef OUTPUT_SUBTRIM_PATH_DIV
-		#define OUTPUT_SUBTRIM_PATH_DIV 5
-	#endif
-
 	#ifndef OUTPUT_SUBTRIM_USER_MULTIPLIER
 		#define OUTPUT_SUBTRIM_USER_MULTIPLIER 1
 	#endif
-	#define OUTPUT_SUBTRIM_MULTIPLIER	(IN_NORM/PPM_PULSE_DEFLECTION*OUTPUT_SUBTRIM_USER_MULTIPLIER)
+	#define OUTPUT_SUBTRIM_MULTIPLIER	(IN_NORM/(PPM_PULSE_DEFLECTION)*PPM_ONE_US*OUTPUT_SUBTRIM_USER_MULTIPLIER)
 
 	#if (PPM_PULSE_DEFLECTION * PPM_ONE_US)* (IN_NORM*OUTPUT_INMIX_COEF_MAX*HW_INPUTS) / (OUTPUT_INMIX_COEF_MAX*HW_INPUTS) * OUTPUT_EPA_MAX >= INT32_MAX
 		#error "possible overflow detected! try decreasing IN_NORM, you max try to edit formula in output.c 'out->value =...'"

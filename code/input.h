@@ -34,7 +34,7 @@
 #ifndef INPUT_TRIM_USER_MULTIPLIER
 	#define INPUT_TRIM_USER_MULTIPLIER 1
 #endif
-#define INPUT_TRIM_MULTIPLIER (IN_NORM/(PPM_PULSE_DEFLECTION)*INPUT_TRIM_USER_MULTIPLIER)//multiply by N to align with 1uS resolution
+#define INPUT_TRIM_MULTIPLIER (IN_NORM/(PPM_PULSE_DEFLECTION)*PPM_ONE_US*INPUT_TRIM_USER_MULTIPLIER)//multiply by N to align with 1uS resolution
 
 
 typedef struct{
