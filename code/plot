@@ -1,0 +1,26 @@
+set terminal png
+set output "size.png"
+set autoscale
+set ytics nomirror
+set y2tics
+
+set style line 100 linecolor rgb "gray" linewidth 1
+set style line 1  linecolor rgb "red" linewidth 2
+set style line 2  linecolor rgb "#008800" linewidth 2
+
+set xlabel "build number"
+set ylabel "FLASH Bytes" tc rgb "red"
+set y2label "RAM Bytes" tc rgb "#008800"
+
+set nokey
+
+
+set grid xtics ytics linestyle 100
+
+set terminal unknown
+plot	"size.log" using 0:($1+$2) axes x1y1 with lines title "Program" ls 1,\
+	"size.log" using 0:($2+$3) axes x1y2 with lines title "Data" ls 2
+
+set xrange [*:GPVAL_DATA_X_MAX]
+set terminal png size 1000,600
+replot

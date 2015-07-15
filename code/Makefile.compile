@@ -1,0 +1,5 @@
+all: $(OBJECTS)
+
+%.o: %.c
+	$(AVR_CC) $(CFLAGS) $^ -o $@
+
