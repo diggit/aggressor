@@ -255,14 +255,14 @@ menu_t _input_menu={
 void menu_structure_init(void)
 {
 	//setup name pointers
-	for (uint8_t n = 0; n < array_length(input_names) ; n++)
+	for (uint8_t n = 0; n < HW_INPUTS ; n++)
 	{
 		input_menu_items[n].name=input_names[n];
 		output_inmix_items[n].name=input_names[n];
 		input_menu_items[n].submenu=&input_properties_menu;
 	}
 
-	for (uint8_t n = 0; n < array_length(output_names) ; n++)
+	for (uint8_t n = 0; n < PPM_OUTPUT_COUNT ; n++)
 	{
 		output_menu_items[n].name=output_names[n];
 		output_menu_items[n].submenu=&output_properties_menu;
