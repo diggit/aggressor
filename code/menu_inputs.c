@@ -32,9 +32,9 @@ void menu_input_notify_trim_change(input_p in,uint8_t in_num)
 //TRIM bind menu functions
 void menu_input_trim_start(void)
 {
-	if(inputs[SELECTED].global.type==IN_TYPE_TOGGLING)
+	if(inputs[SELECTED].global.type!=IN_TYPE_ANALOG)
 	{
-		//nothig to do for toggling input
+		//nothig to do for non analog input
 		menu_return();
 	}
 	else
@@ -51,7 +51,7 @@ void menu_input_trim_draw(uint8_t val)
 
 char* menu_input_trim_getval(uint8_t unused)
 {
-	if(inputs[SELECTED].global.type==IN_TYPE_TOGGLING)
+	if(inputs[SELECTED].global.type!=IN_TYPE_ANALOG)
 		return pgmtoa(not_available_str);
 	else
 		return pgmtoa(trims[inputs[menu->parent->hilighted].model.trim].name);

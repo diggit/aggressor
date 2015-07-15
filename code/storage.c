@@ -177,7 +177,7 @@ uint8_t storage_model_load(uint8_t slot_num)
 	{
 		eeprom_read_block(&inputs[in_num].model,E8(addr),EAD_MODEL_INPUT_SIZE);
 		addr+=EAD_MODEL_INPUT_SIZE;
-		if(inputs[in_num].global.type==IN_TYPE_TOGGLING)//toggling input has no triming options, why should have?
+		if(inputs[in_num].global.type!=IN_TYPE_ANALOG)//non analog input has no triming options, why should have?
 		{
 			inputs[in_num].model.trim=TRIM_NONE;
 			inputs[in_num].model.trim_val=0;

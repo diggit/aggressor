@@ -259,13 +259,7 @@ void input_eval_all(void)
 						bit_clr(in->global.raw_center, (1<<1));
 
 				}
-				if(in->runtime.levels[in->model.level_actual]>0)
-					in->runtime.value= (int32_t)(IN_NORM - (in->model.trim_val * INPUT_TRIM_MULTIPLIER) ) * in->runtime.levels[in->model.level_actual]/ IN_DIGITAL_MAX + (in->model.trim_val * INPUT_TRIM_MULTIPLIER);
-				else
-					in->runtime.value= (int32_t)(IN_NORM - (in->model.trim_val * INPUT_TRIM_MULTIPLIER) ) * in->runtime.levels[in->model.level_actual]/ IN_DIGITAL_MAX - (in->model.trim_val * INPUT_TRIM_MULTIPLIER);
-
-
-
+				in->runtime.value= (int32_t)(IN_NORM) * in->runtime.levels[in->model.level_actual]/ IN_DIGITAL_MAX;
 			}
 
 			if (in->global.invert)
