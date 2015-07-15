@@ -14,7 +14,7 @@ This repo contains firmware replacement for modified HITEC Aggressor SRX and doc
 * easy to add any functionality and menus
 * **inputs (5)**
 	* inverting *[stored globally]*
-	* enabing (freeze) *[stored globally]*
+	* enabling (freeze) *[stored globally]*
 	* [trim](http://www.rcheliwiki.com/Trim) - assign any trim *[stored per model]*
 	* 3 analog inputs: wheel, trigger, D/R
 		* all could be calibrated *[stored globally]*
@@ -46,7 +46,7 @@ This repo contains firmware replacement for modified HITEC Aggressor SRX and doc
 	* enable disable PPM output
 
 ## Contents
-* **rev** reverse engineered schematics of TX in KiCAD (PMG may not be up to date)
+* **rev** reverse engineered schematics of TX in KiCAD (PNG may not be up to date)
 * **code** firmware code
 * **doc** photos and etc...
 
