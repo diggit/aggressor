@@ -59,10 +59,10 @@ Whole MCU is glued by 4 glue dots! Add a lot of solder on all pins, then heat it
 *(I've destroyed my original MCU due to overheating chip. Then I realized, that all parts are glued to PCB. Pros: higher motivation to finish this FW)*
 
 | VF header |	| ISP header |
-|-----------|	|-----------|
+|-----------|---|-----------|
 | PPM |			| +5V |
 | VCC |			| MISO |
 | NC |			| RST |
 | GND |			| SOCKET |
 | ANT |			| MOSI |
-||				| GND |
+| |				| GND |
