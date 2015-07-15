@@ -10,67 +10,11 @@
 #include "output.h"
 
 
-menu_items output_menu_items[PPM_OUTPUT_COUNT]=
-{
-	{
-		.submenu=&output_properties_menu
-	},
-	{
-		.submenu=&output_properties_menu
-	},
-	{
-		.submenu=&output_properties_menu
-	},
-	{
-		.submenu=&output_properties_menu
-	},
-	{
-		.submenu=&output_properties_menu
-	}
-};
+menu_items output_menu_items[PPM_OUTPUT_COUNT];
+menu_items output_inmix_items[PPM_OUTPUT_COUNT];
 
-menu_items input_menu_items[HW_INPUTS]=
-{
-	{
-		.submenu=&input_properties_menu
-	},
-	{
-		.submenu=&input_properties_menu
-	},
-	{
-		.submenu=&input_properties_menu
-	},
-	{
-		.submenu=&input_properties_menu
-	},
-	{
-		.submenu=&input_properties_menu
-	}
-};
+menu_items input_menu_items[HW_INPUTS];
 
-menu_items output_inmix_items[PPM_OUTPUT_COUNT]=
-{
-	{
-		.get_value=menu_output_inmix_getval,
-		.handler_func=menu_output_inmix_start
-	},
-	{
-		.get_value=menu_output_inmix_getval,
-		.handler_func=menu_output_inmix_start
-	},
-	{
-		.get_value=menu_output_inmix_getval,
-		.handler_func=menu_output_inmix_start
-	},
-	{
-		.get_value=menu_output_inmix_getval,
-		.handler_func=menu_output_inmix_start
-	},
-	{
-		.get_value=menu_output_inmix_getval,
-		.handler_func=menu_output_inmix_start
-	}
-};
 
 const char subtrim_str[] PROGMEM={"subtrim"};
 const char inmix_str[] PROGMEM={"inMIX"};
@@ -315,10 +259,14 @@ void menu_structure_init(void)
 	{
 		input_menu_items[n].name=input_names[n];
 		output_inmix_items[n].name=input_names[n];
+		input_menu_items[n].submenu=&input_properties_menu;
 	}
 
 	for (uint8_t n = 0; n < array_length(output_names) ; n++)
 	{
 		output_menu_items[n].name=output_names[n];
+		output_menu_items[n].submenu=&output_properties_menu;
+		output_inmix_items[n].get_value=menu_output_inmix_getval;
+		output_inmix_items[n].handler_func=menu_output_inmix_start;
 	}
 }
