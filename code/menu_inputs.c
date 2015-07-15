@@ -10,6 +10,7 @@
 #define SELECTED menu->parent->hilighted
 
 const char idle_trim_str[] PROGMEM={"trim "};
+const char not_available_str[] PROGMEM={"N/A"};
 
 void menu_input_notify_trim_change(input_p in,uint8_t in_num)
 {
@@ -31,8 +32,16 @@ void menu_input_notify_trim_change(input_p in,uint8_t in_num)
 //TRIM bind menu functions
 void menu_input_trim_start(void)
 {
-	menu_tmp.u8=inputs[menu->parent->hilighted].model.trim;
-	menu_simple_lister_start_ex(&menu_tmp.u8,0, array_length(trims)-1, menu_input_trim_draw,menu_input_trim_flush);
+	if(inputs[SELECTED].global.type==IN_TYPE_TOGGLING)
+	{
+		//nothig to do for toggling input
+		menu_return();
+	}
+	else
+	{
+		menu_tmp.u8=inputs[menu->parent->hilighted].model.trim;
+		menu_simple_lister_start_ex(&menu_tmp.u8,0, array_length(trims)-1, menu_input_trim_draw,menu_input_trim_flush);
+	}
 }
 
 void menu_input_trim_draw(uint8_t val)
@@ -42,7 +51,10 @@ void menu_input_trim_draw(uint8_t val)
 
 char* menu_input_trim_getval(uint8_t unused)
 {
-	return pgmtoa(trims[inputs[menu->parent->hilighted].model.trim].name);
+	if(inputs[SELECTED].global.type==IN_TYPE_TOGGLING)
+		return pgmtoa(not_available_str);
+	else
+		return pgmtoa(trims[inputs[menu->parent->hilighted].model.trim].name);
 }
 
 void menu_input_trim_flush(void)
@@ -148,6 +160,8 @@ void menu_input_deadzone_start()
 {
 	if(inputs[menu->parent->hilighted].global.type==IN_TYPE_ANALOG) //only for analog inputs makes deadzone sense
 		menu_simple_lister_start(&inputs[menu->parent->hilighted].model.shared.deadzone,0, 100 , NULL);
+	else
+		menu_return();
 }
 
 char *menu_input_deadzone_getval(uint8_t unused)
@@ -155,7 +169,7 @@ char *menu_input_deadzone_getval(uint8_t unused)
 	if(inputs[menu->parent->hilighted].global.type==IN_TYPE_ANALOG) //only for analog inputs makes deadzone sense
 		return itoa(inputs[menu->parent->hilighted].model.shared.deadzone,MENU_NUMBER_LENGTH);
 	else
-		return ctoa('-');
+		return pgmtoa(not_available_str);
 }
 
 

@@ -125,11 +125,18 @@ uint8_t in_digital_was,in_digital_now; //for rising edge catching
 void input_eval_all(void)
 {
 	uint8_t in_num;
+	int8_t trim;
 	in_digital_now=0;
 	input_p in;
 	for(in_num=0;in_num<array_length(inputs);in_num++)
 	{
 		in=&inputs[in_num];
+
+		//this way, we could preserve trim orientation, even if input gets reversed, this is simpler way than using more formulas
+		if(in->global.invert)
+			trim=-in->model.trim_val;
+		else
+			trim=in->model.trim_val;
 
 		if(trims[in->model.trim].inc)
 		{
@@ -156,16 +163,16 @@ void input_eval_all(void)
 
 					if(val > in->global.raw_center)//positive
 						in->runtime.value=\
-						(int32_t)(IN_NORM - (in->model.trim_val * INPUT_TRIM_MULTIPLIER))\
+						(int32_t)(IN_NORM - (trim * INPUT_TRIM_MULTIPLIER))\
 						*(val - in->global.raw_center - in->model.shared.deadzone)\
 						/(in->global.raw_max - in->global.raw_center -  in->model.shared.deadzone)\
-						+ (in->model.trim_val * INPUT_TRIM_MULTIPLIER);
+						+ (trim * INPUT_TRIM_MULTIPLIER);
 					else //negative
 						in->runtime.value=\
-						-(int32_t)(IN_NORM + (in->model.trim_val * INPUT_TRIM_MULTIPLIER))\
+						-((int32_t)(IN_NORM + (trim * INPUT_TRIM_MULTIPLIER))\
 						*(in->global.raw_center - val - in->model.shared.deadzone )\
 						/(in->global.raw_center - in->global.raw_min - in->model.shared.deadzone)\
-						+ (in->model.trim_val * INPUT_TRIM_MULTIPLIER);
+						- (trim * INPUT_TRIM_MULTIPLIER));
 
 						//A: maximal value of variable part(decreases with offset)
 						//B:raw actual size of variable part
@@ -174,7 +181,7 @@ void input_eval_all(void)
 						// C/B is in range 0~1, *A gives it propper scale and +D propper offset
 				}
 				else
-					in->runtime.value=(in->model.trim_val * INPUT_TRIM_MULTIPLIER);//otherwise, use trim offset only
+					in->runtime.value=(trim * INPUT_TRIM_MULTIPLIER);//otherwise, use trim offset only
 
 
 			}
@@ -202,9 +209,9 @@ void input_eval_all(void)
 					in->runtime.raw_value=in->global.raw_min;
 
 				if(in->runtime.raw_value>0)
-					in->runtime.value= (int32_t)(IN_NORM - (in->model.trim_val * INPUT_TRIM_MULTIPLIER)) * in->runtime.raw_value / IN_DIGITAL_MAX + (in->model.trim_val * INPUT_TRIM_MULTIPLIER);
+					in->runtime.value= (int32_t)(IN_NORM ) * in->runtime.raw_value / IN_DIGITAL_MAX;
 				else
-					in->runtime.value= (int32_t)(IN_NORM + (in->model.trim_val * INPUT_TRIM_MULTIPLIER)) * in->runtime.raw_value / IN_DIGITAL_MAX - (in->model.trim_val * INPUT_TRIM_MULTIPLIER);
+					in->runtime.value= (int32_t)(IN_NORM ) * in->runtime.raw_value / IN_DIGITAL_MAX;
 
 			}
 			else if(in->global.type==IN_TYPE_LEVELING)
