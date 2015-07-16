@@ -18,7 +18,7 @@ This repo contains firmware replacement for modified HITEC Aggressor SRX and doc
 	* 3 analog inputs: wheel, trigger, D/R
 		* all could be calibrated *[stored globally]*
         * [trim](http://www.rcheliwiki.com/Trim) - assign any trim *[stored per model]*
-		* oversampled
+		* [oversampled](http://www.atmel.com/Images/doc2505.pdf)
 		* deadzone *[stored globally]*
 	* 1 toggling input: bug thumb button
 		 * levels setup *[stored per model]*
