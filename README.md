@@ -44,6 +44,8 @@ This repo contains firmware replacement for modified HITEC Aggressor SRX and doc
 	* button beeps enable/disable
 	* battery alarm voltage
 	* enable disable PPM output
+* some GPIOs are still free + unused i2c
+* UART header on back side for future FrSky telemetry
 
 ## Contents
 * **rev** reverse engineered schematics of TX in KiCAD (PNG may not be up to date)
