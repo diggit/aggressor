@@ -41,16 +41,41 @@
 
 
 typedef struct{
-	struct
+	union
 	{
-		uint8_t adc_channel;
-		int16_t raw_min;
-		int16_t raw_max;
-		int16_t raw_center; // input saves here previous state of button to detect rising edge
-		uint8_t enabled:1;
-		uint8_t invert:1;
-		uint8_t type:2;
+		struct
+		{
+			uint8_t adc_channel;
+			int16_t raw_min;
+			int16_t raw_max;
+			int16_t raw_center; // input saves here previous state of button to detect rising edge
+			uint8_t enabled:1;
+			uint8_t invert:1;
+			uint8_t unused_0:2;//place for type, access it through .any
+		}analog;
+		struct
+		{
+			uint8_t pin;
+			int16_t min;
+			int16_t max;
+			int16_t edge_detect; // input saves here previous state of button to detect rising edge
+			uint8_t enabled:1;
+			uint8_t invert:1;
+			uint8_t unused_0:2;//place for type, access it through .any
+		}digital;
+		struct
+		{
+			uint8_t unused_0;
+			int16_t unused_1;
+			int16_t unused_2;
+			int16_t unused_3; // input saves here previous state
+			uint8_t enabled:1;
+			uint8_t invert:1;
+			uint8_t type:2;//well, this should be outside of any struct, but then it would occupy whole byte
+			uint8_t unused_4:4; //just as aligner
+		}common;
 	}global;//same for all models
+
 
 	struct
 	{
@@ -59,19 +84,16 @@ typedef struct{
 		int8_t *levels; //pointer to array of levels, pointer should not be saved
 	}runtime;//only for runtime, don't save
 
-	struct
-	{
-		union {
-			struct{
-				uint8_t deadzone; //for analog type
-				int8_t	trim_val;
-				uint8_t	trim:4;
-			}analog;
-			struct{
-				uint8_t level_count;//for leveling type
-				uint8_t level_actual:4;
-			}digital;
-		}shared;	//never used both at the same time
+	union {
+		struct{
+			uint8_t deadzone; //for analog type
+			int8_t	trim_val;
+			uint8_t	trim:4;
+		}analog;
+		struct{
+			uint8_t level_count;//for leveling type
+			uint8_t level_actual:4;
+		}digital;
 	}model; //model specific
 }input;
 

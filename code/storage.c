@@ -99,7 +99,7 @@ void storage_input_config_load()
 	for(uint8_t in_num=0;in_num<array_length(inputs);in_num++)
 	{
 		eeprom_read_block(&in_tmp.global,E8(EAD_INPUT_GET_ADDRESS(in_num)),EAD_INPUT_SIZE);
-		if(in_tmp.global.type==inputs[in_num].global.type )
+		if(in_tmp.global.common.type==inputs[in_num].global.common.type )
 		{
 			inputs[in_num].global=in_tmp.global;//copy verified struct from eeprom
 		}
@@ -151,9 +151,9 @@ void storage_model_store(uint8_t slot_num)
 	//expected exactly 1 leveling input and exactly 1 !
 	eeprom_update_block(in_alt_levels,E8(addr),EAD_MODEL_INPUT_LEVELING_TABLE_SIZE);
 	addr+=EAD_MODEL_INPUT_LEVELING_TABLE_SIZE;
-	eeprom_update_byte(E8(addr),inputs[IN_THUMB].global.raw_min);
+	eeprom_update_byte(E8(addr),inputs[IN_THUMB].global.digital.min);
 	addr++;
-	eeprom_update_byte(E8(addr),inputs[IN_THUMB].global.raw_max);
+	eeprom_update_byte(E8(addr),inputs[IN_THUMB].global.digital.max);
 }
 
 uint8_t storage_model_load(uint8_t slot_num)
@@ -182,9 +182,9 @@ uint8_t storage_model_load(uint8_t slot_num)
 	eeprom_read_block(in_alt_levels,E8(addr),EAD_MODEL_INPUT_LEVELING_TABLE_SIZE);
 	addr+=EAD_MODEL_INPUT_LEVELING_TABLE_SIZE;
 	//override raw min/max for toggling input, zhis is model specific
-	inputs[IN_THUMB].global.raw_min=(int8_t)eeprom_read_byte(E8(addr));
+	inputs[IN_THUMB].global.digital.min=(int8_t)eeprom_read_byte(E8(addr));
 	addr++;
-	inputs[IN_THUMB].global.raw_max=(int8_t)eeprom_read_byte(E8(addr));
+	inputs[IN_THUMB].global.digital.max=(int8_t)eeprom_read_byte(E8(addr));
 
 	return 1;
 }

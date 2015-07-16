@@ -32,23 +32,26 @@ input inputs[]=
 	{
 		.global=
 		{
-			.adc_channel=ADC_STEER,
-			.type=IN_TYPE_ANALOG,
-			.raw_min=76,
-			.raw_max=982,
-			.raw_center=527,
-			.enabled=1,
-			.invert=1
+			.analog=
+			{
+				.adc_channel=ADC_STEER,
+				.raw_min=76,
+				.raw_max=982,
+				.raw_center=527
+			},
+			.common=
+			{
+				.type=IN_TYPE_ANALOG,
+				.enabled=1,
+				.invert=1
+			}
 		},
 		.model=
 		{
-			.shared=
+			.analog=
 			{
-				.analog=
-				{
-					.deadzone=10,
-					.trim=TRIM_TOP,
-				}
+				.deadzone=10,
+				.trim=TRIM_TOP,
 			}
 		}
 	},
@@ -56,22 +59,25 @@ input inputs[]=
 	{
 		.global=
 		{
-			.adc_channel=ADC_THROTTLE,
-			.type=IN_TYPE_ANALOG,
-			.raw_min=386,
-			.raw_max=847,
-			.raw_center=538,
-			.enabled=1
+			.analog=
+			{
+				.adc_channel=ADC_THROTTLE,
+				.raw_min=386,
+				.raw_max=847,
+				.raw_center=538
+			},
+			.common=
+			{
+				.type=IN_TYPE_ANALOG,
+				.enabled=1
+			}
 		},
 		.model=
 		{
-			.shared=
+			.analog=
 			{
-				.analog=
-				{
-					.deadzone=2,
-					.trim=TRIM_RIGHT
-				}
+				.deadzone=2,
+				.trim=TRIM_RIGHT
 			}
 		}
 	},
@@ -79,22 +85,25 @@ input inputs[]=
 	{
 		.global=
 		{
-			.adc_channel=ADC_DR,
-			.type=IN_TYPE_ANALOG,
-			.raw_min=0,
-			.raw_max=1023,
-			.raw_center=511,
-			.enabled=1
+			.analog=
+			{
+				.adc_channel=ADC_DR,
+				.raw_min=0,
+				.raw_max=1023,
+				.raw_center=511
+			},
+			.common=
+			{
+				.type=IN_TYPE_ANALOG,
+				.enabled=1
+			}
 		},
 		.model=
 		{
-			.shared=
+			.analog=
 			{
-				.analog=
-				{
-					.deadzone=2,
-					.trim=TRIM_LEFT
-				}
+				.deadzone=2,
+				.trim=TRIM_LEFT
 			}
 		}
 	},
@@ -102,12 +111,15 @@ input inputs[]=
 	{
 		.global=
 		{
-			.adc_channel=ADC_ALT,
-			.type=IN_TYPE_LEVELING,
-			// .raw_min=0,
-			// .raw_max=0,
-			// .raw_center=0,
-			.enabled=1
+			.analog=
+			{
+				.adc_channel=ADC_ALT,//yeah, this is digital channel, but control buttons are connected to ADC
+			},
+			.common=
+			{
+				.type=IN_TYPE_LEVELING,
+				.enabled=1
+			}
 		},
 		.runtime=
 		{
@@ -115,12 +127,9 @@ input inputs[]=
 		},
 		.model=
 		{
-			.shared=
+			.digital=
 			{
-				.digital=
-				{
-					.level_count=5
-				}
+				.level_count=5
 			}
 		}
 	},
@@ -128,27 +137,19 @@ input inputs[]=
 	{
 		.global=
 		{
-			.adc_channel=(1<<0), //on PB0
-			.type=IN_TYPE_TOGGLING,
+			.digital=
+			{
+				.pin=(1<<0) //on PB0
+			},
+			.common=
+			{
+				.type=IN_TYPE_TOGGLING,
+				.enabled=1
+			}
 			// .raw_min=0,
 			// .raw_max=0,
 			// .raw_center=0,
-			.enabled=1
-		}/*,
-		.model=
-		{
-			.shared=
-			{
-				.digital=
-				{
-
-				},
-				.analog=
-				{
-
-				}
-			}
-		}*/
+		}
 	}
 };
 
@@ -164,47 +165,47 @@ void input_eval_all(void)
 		in=&inputs[in_num];
 
 
-		if(in->global.enabled)
+		if(in->global.common.enabled)
 		{
-			if(in->global.type==IN_TYPE_ANALOG)
+			if(in->global.common.type==IN_TYPE_ANALOG)
 			{
 				int8_t trim;
-				if(in->global.invert) //this way, we could preserve trim orientation, even if input gets reversed, this is simpler way than using more formulas
-					trim=-in->model.shared.analog.trim_val;
+				if(in->global.common.invert) //this way, we could preserve trim orientation, even if input gets reversed, this is simpler way than using more formulas
+					trim=-in->model.analog.trim_val;
 				else
-					trim=in->model.shared.analog.trim_val;
+					trim=in->model.analog.trim_val;
 
 				//resolve, if any trim was pressed, change trim value
-				if(trims[in->model.shared.analog.trim].inc)
+				if(trims[in->model.analog.trim].inc)
 				{
-					if(in->model.shared.analog.trim_val < TRIM_MAX )
-						in->model.shared.analog.trim_val++;
+					if(in->model.analog.trim_val < TRIM_MAX )
+						in->model.analog.trim_val++;
 					menu_input_notify_trim_change(in,in_num);
 				}
-				else if(trims[in->model.shared.analog.trim].dec)
+				else if(trims[in->model.analog.trim].dec)
 				{
-					if(in->model.shared.analog.trim_val > TRIM_MIN )
-						in->model.shared.analog.trim_val--;
+					if(in->model.analog.trim_val > TRIM_MIN )
+						in->model.analog.trim_val--;
 					menu_input_notify_trim_change(in,in_num);
 				}
 
-				in->runtime.raw_value = adc_measured[in->global.adc_channel];
+				in->runtime.raw_value = adc_measured[in->global.analog.adc_channel];
 
-				if(uabs((int16_t)in->global.raw_center - (int16_t)in->runtime.raw_value) > in->model.shared.analog.deadzone)//out of deadzone
+				if(uabs((int16_t)in->global.analog.raw_center - (int16_t)in->runtime.raw_value) > in->model.analog.deadzone)//out of deadzone
 				{
-					uint16_t val=crop(in->runtime.raw_value,in->global.raw_min,in->global.raw_max);
+					uint16_t val=crop(in->runtime.raw_value,in->global.analog.raw_min,in->global.analog.raw_max);
 
-					if(val > in->global.raw_center)//positive
+					if(val > in->global.analog.raw_center)//positive
 						in->runtime.value=\
 						(int32_t)(IN_NORM - (trim * INPUT_TRIM_MULTIPLIER))\
-						*(val - in->global.raw_center - in->model.shared.analog.deadzone)\
-						/(in->global.raw_max - in->global.raw_center -  in->model.shared.analog.deadzone)\
+						*(val - in->global.analog.raw_center - in->model.analog.deadzone)\
+						/(in->global.analog.raw_max - in->global.analog.raw_center -  in->model.analog.deadzone)\
 						+ (trim * INPUT_TRIM_MULTIPLIER);
 					else //negative
 						in->runtime.value=\
 						-((int32_t)(IN_NORM + (trim * INPUT_TRIM_MULTIPLIER))\
-						*(in->global.raw_center - val - in->model.shared.analog.deadzone )\
-						/(in->global.raw_center - in->global.raw_min - in->model.shared.analog.deadzone)\
+						*(in->global.analog.raw_center - val - in->model.analog.deadzone )\
+						/(in->global.analog.raw_center - in->global.analog.raw_min - in->model.analog.deadzone)\
 						- (trim * INPUT_TRIM_MULTIPLIER));
 
 						//A: maximal value of variable part(decreases with offset)
@@ -218,28 +219,28 @@ void input_eval_all(void)
 
 
 			}
-			else if(in->global.type==IN_TYPE_TOGGLING)
+			else if(in->global.common.type==IN_TYPE_TOGGLING)
 			{
-				if( bit_get(IN_DIGITAL_PINREG , in->global.adc_channel) )
+				if( bit_get(IN_DIGITAL_PINREG , in->global.digital.pin) )
 				{
-					if(in->global.raw_center==0)
+					if(in->global.digital.edge_detect==0)
 					{
 						beep(BEEP_IN_COMMON);
-						in->global.raw_center=1;
-						if(in->model.shared.digital.level_actual==0)
-							in->model.shared.digital.level_actual=1;
+						in->global.digital.edge_detect=1;
+						if(in->model.digital.level_actual==0)
+							in->model.digital.level_actual=1;
 						else
-							in->model.shared.digital.level_actual=0;
+							in->model.digital.level_actual=0;
 					}
 					//else pressed but not edge
 				}
 				else
-					in->global.raw_center=0;
+					in->global.digital.edge_detect=0;
 
-				if(in->model.shared.digital.level_actual)
-					in->runtime.raw_value=in->global.raw_max;
+				if(in->model.digital.level_actual)
+					in->runtime.raw_value=in->global.digital.max;
 				else
-					in->runtime.raw_value=in->global.raw_min;
+					in->runtime.raw_value=in->global.digital.min;
 
 				if(in->runtime.raw_value>0)
 					in->runtime.value= (int32_t)(IN_NORM ) * in->runtime.raw_value / IN_DIGITAL_MAX;
@@ -247,19 +248,19 @@ void input_eval_all(void)
 					in->runtime.value= (int32_t)(IN_NORM ) * in->runtime.raw_value / IN_DIGITAL_MAX;
 
 			}
-			else if(in->global.type==IN_TYPE_LEVELING)
+			else if(in->global.common.type==IN_TYPE_LEVELING)
 			{
-				in->runtime.raw_value=adc_measured[in->global.adc_channel];
+				in->runtime.raw_value=adc_measured[in->global.analog.adc_channel];
 				if(in->runtime.raw_value > ADC_DIGITAL_HIGH)//INC pressed
 				{
-					if(bit_get(in->global.raw_center,(1<<0)) ==0) //and was zero ->this is rising edge
+					if(bit_get(in->global.digital.edge_detect,(1<<0)) ==0) //and was zero ->this is rising edge
 					{
 						//INC rising edge
-						bit_set(in->global.raw_center, (1<<0));//remember, that INC is pressed
-						if(in->model.shared.digital.level_actual < IN_LEVELING_MAX_LEVELS-1 && in->model.shared.digital.level_actual < in->model.shared.digital.level_count-1)//if in range, increase
+						bit_set(in->global.digital.edge_detect, (1<<0));//remember, that INC is pressed
+						if(in->model.digital.level_actual < IN_LEVELING_MAX_LEVELS-1 && in->model.digital.level_actual < in->model.digital.level_count-1)//if in range, increase
 						{
 							beep(BEEP_IN_COMMON);
-							in->model.shared.digital.level_actual++;
+							in->model.digital.level_actual++;
 							if(menu==&leveling_input_menu && menu->parent->parent->hilighted == in_num)
 								menu_draw();
 						}
@@ -269,18 +270,18 @@ void input_eval_all(void)
 				}
 				else
 				{
-					bit_clr(in->global.raw_center, (1<<0));//remember, that INC in NOT pressed
+					bit_clr(in->global.digital.edge_detect, (1<<0));//remember, that INC in NOT pressed
 
 					if(in->runtime.raw_value < ADC_DIGITAL_LOW)//DEC pressed
 					{
-						if(bit_get(in->global.raw_center,(1<<1)) ==0) //and was zero ->this is rising edge
+						if(bit_get(in->global.digital.edge_detect,(1<<1)) ==0) //and was zero ->this is rising edge
 						{
 							//INC rising edge
-							bit_set(in->global.raw_center, (1<<1));//remember, that DEC is pressed
-							if(in->model.shared.digital.level_actual > 0)//if in range, decrease
+							bit_set(in->global.digital.edge_detect, (1<<1));//remember, that DEC is pressed
+							if(in->model.digital.level_actual > 0)//if in range, decrease
 							{
 								beep(BEEP_IN_COMMON);
-								in->model.shared.digital.level_actual--;
+								in->model.digital.level_actual--;
 								if(menu==&leveling_input_menu && menu->parent->parent->hilighted == in_num)
 									menu_draw();
 							}
@@ -289,13 +290,13 @@ void input_eval_all(void)
 						}
 					}
 					else
-						bit_clr(in->global.raw_center, (1<<1));
+						bit_clr(in->global.digital.edge_detect, (1<<1));
 
 				}
-				in->runtime.value= (int32_t)(IN_NORM) * in->runtime.levels[in->model.shared.digital.level_actual]/ IN_DIGITAL_MAX;
+				in->runtime.value= (int32_t)(IN_NORM) * in->runtime.levels[in->model.digital.level_actual]/ IN_DIGITAL_MAX;
 			}
 
-			if (in->global.invert)
+			if (in->global.common.invert)
 				in->runtime.value=-in->runtime.value;
 		}
 	}
