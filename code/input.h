@@ -62,12 +62,16 @@ typedef struct{
 	struct
 	{
 		union {
-			uint8_t level_count;//for leveling type
-			uint8_t deadzone; //for analog type
+			struct{
+				uint8_t deadzone; //for analog type
+				int8_t	trim_val;
+				uint8_t	trim:4;
+			}analog;
+			struct{
+				uint8_t level_count;//for leveling type
+				uint8_t level_actual:4;
+			}digital;
 		}shared;	//never used both at the same time
-		int8_t	trim_val;
-		uint8_t level_actual:4;
-		uint8_t	trim:4;
 	}model; //model specific
 }input;
 

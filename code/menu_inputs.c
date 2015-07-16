@@ -14,7 +14,7 @@ const char not_available_str[] PROGMEM={"N/A"};
 
 void menu_input_notify_trim_change(input_p in,uint8_t in_num)
 {
-	if(in->model.trim_val==0)
+	if(in->model.shared.analog.trim_val==0)
 		beep(BEEP_TRIM_ZERO);
 	else
 		beep(BEEP_TRIM_COMMON);
@@ -23,7 +23,7 @@ void menu_input_notify_trim_change(input_p in,uint8_t in_num)
 	{
 		LCD_writeString_XY(10,3,pgmtoa(idle_trim_str),OVERWRITE);
 		LCD_writeString_XY(0,0,pgmtoa(input_names[in_num]),RELATIVE|OVERWRITE);
-		LCD_writeString_XY(25,4,itoa(in->model.trim_val,3),OVERWRITE);
+		LCD_writeString_XY(25,4,itoa(in->model.shared.analog.trim_val,3),OVERWRITE);
 		screen_schedule_redraw(2*SCREEN_REDRAW_1S);
 	}
 }
@@ -32,15 +32,15 @@ void menu_input_notify_trim_change(input_p in,uint8_t in_num)
 //TRIM bind menu functions
 void menu_input_trim_start(void)
 {
-	if(inputs[SELECTED].global.type!=IN_TYPE_ANALOG)
+	if(inputs[SELECTED].global.type==IN_TYPE_ANALOG)
 	{
-		//nothig to do for non analog input
-		menu_return();
+		menu_tmp.u8=inputs[menu->parent->hilighted].model.shared.analog.trim;
+		menu_simple_lister_start_ex(&menu_tmp.u8,0, array_length(trims)-1, menu_input_trim_draw,menu_input_trim_flush);
 	}
 	else
 	{
-		menu_tmp.u8=inputs[menu->parent->hilighted].model.trim;
-		menu_simple_lister_start_ex(&menu_tmp.u8,0, array_length(trims)-1, menu_input_trim_draw,menu_input_trim_flush);
+		//nothig to do for non analog input
+		menu_return();
 	}
 }
 
@@ -54,12 +54,12 @@ char* menu_input_trim_getval(uint8_t unused)
 	if(inputs[SELECTED].global.type!=IN_TYPE_ANALOG)
 		return pgmtoa(not_available_str);
 	else
-		return pgmtoa(trims[inputs[menu->parent->hilighted].model.trim].name);
+		return pgmtoa(trims[inputs[menu->parent->hilighted].model.shared.analog.trim].name);
 }
 
 void menu_input_trim_flush(void)
 {
-	inputs[menu->parent->hilighted].model.trim=menu_tmp.u8;
+	inputs[menu->parent->hilighted].model.shared.analog.trim=menu_tmp.u8;
 }
 
 
@@ -159,7 +159,7 @@ void menu_input_callibration_analog_draw()
 void menu_input_deadzone_start()
 {
 	if(inputs[menu->parent->hilighted].global.type==IN_TYPE_ANALOG) //only for analog inputs makes deadzone sense
-		menu_simple_lister_start(&inputs[menu->parent->hilighted].model.shared.deadzone,0, 100 , NULL);
+		menu_simple_lister_start(&inputs[menu->parent->hilighted].model.shared.analog.deadzone,0, 100 , NULL);
 	else
 		menu_return();
 }
@@ -167,7 +167,7 @@ void menu_input_deadzone_start()
 char *menu_input_deadzone_getval(uint8_t unused)
 {
 	if(inputs[menu->parent->hilighted].global.type==IN_TYPE_ANALOG) //only for analog inputs makes deadzone sense
-		return itoa(inputs[menu->parent->hilighted].model.shared.deadzone,MENU_NUMBER_LENGTH);
+		return itoa(inputs[menu->parent->hilighted].model.shared.analog.deadzone,MENU_NUMBER_LENGTH);
 	else
 		return pgmtoa(not_available_str);
 }
@@ -211,29 +211,29 @@ char *menu_input_invert_getval(uint8_t unused)
 // LEVELS of leveling input
 void menu_input_leveling_max_levels_start(void)
 {
-	menu_simple_lister_start_ex(&inputs[menu->parent->parent->hilighted].model.shared.level_count,2 , IN_LEVELING_MAX_LEVELS , NULL, menu_input_leveling_max_levels_flush);
+	menu_simple_lister_start_ex(&inputs[menu->parent->parent->hilighted].model.shared.digital.level_count,2 , IN_LEVELING_MAX_LEVELS , NULL, menu_input_leveling_max_levels_flush);
 }
 
 void menu_input_leveling_max_levels_flush(void)
 {
 	input_p in=&inputs[menu->parent->parent->hilighted];
-	in->model.level_actual=crop(in->model.level_actual,0,in->model.shared.level_count-1); //if actual lvl is higher than max, decrease it
+	in->model.shared.digital.level_actual=crop(in->model.shared.digital.level_actual,0,in->model.shared.digital.level_count-1); //if actual lvl is higher than max, decrease it
 }
 
 char *menu_input_leveling_max_levels_getval(uint8_t unused)
 {
-	return itoa(inputs[menu->parent->parent->hilighted].model.shared.level_count,MENU_NUMBER_LENGTH);
+	return itoa(inputs[menu->parent->parent->hilighted].model.shared.digital.level_count,MENU_NUMBER_LENGTH);
 }
 
 //actual level value of leveling
 void menu_input_leveling_actual_level_start(void)
 {
-	menu_simple_lister_signed_start(&inputs[menu->parent->parent->hilighted].runtime.levels[ inputs[menu->parent->parent->hilighted].model.level_actual ],IN_DIGITAL_MIN , IN_DIGITAL_MAX , menu_input_leveling_actual_level_draw);
+	menu_simple_lister_signed_start(&inputs[menu->parent->parent->hilighted].runtime.levels[ inputs[menu->parent->parent->hilighted].model.shared.digital.level_actual ],IN_DIGITAL_MIN , IN_DIGITAL_MAX , menu_input_leveling_actual_level_draw);
 }
 
 char *menu_input_leveling_actual_level_getval(uint8_t unused)
 {
-	return itoa(inputs[menu->parent->parent->hilighted].runtime.levels[ inputs[menu->parent->parent->hilighted].model.level_actual ],MENU_NUMBER_LENGTH);
+	return itoa(inputs[menu->parent->parent->hilighted].runtime.levels[ inputs[menu->parent->parent->hilighted].model.shared.digital.level_actual ],MENU_NUMBER_LENGTH);
 }
 
 void menu_input_leveling_actual_level_draw(int8_t val)
@@ -241,9 +241,9 @@ void menu_input_leveling_actual_level_draw(int8_t val)
 	input_p in=&inputs[menu->parent->parent->hilighted];
 	*lister_original_value_p.s=lister_value_copy.s;//save value to take effect immediately on output
 
-	if(lister_original_value_p.s != &in->runtime.levels[ in->model.level_actual ] )//level changed during edit
+	if(lister_original_value_p.s != &in->runtime.levels[ in->model.shared.digital.level_actual ] )//level changed during edit
 	{
-		lister_original_value_p.s=&in->runtime.levels[ in->model.level_actual ]; //refresh pointer to value being changed
+		lister_original_value_p.s=&in->runtime.levels[ in->model.shared.digital.level_actual ]; //refresh pointer to value being changed
 		lister_value_copy.s=*lister_original_value_p.s;//copy actual value to copy variable
 	}
 	//finally, draw itoa
