@@ -17,7 +17,7 @@ const char IN_DR_str[] PROGMEM={"D/R"};
 const char IN_ALT_str[] PROGMEM={"ALT"};
 const char IN_THUMB_str[] PROGMEM={"THMB"};
 
-const char *input_names [HW_INPUTS]=
+const char *input_names [IN_COUNT]=
 {
 	[IN_STEER]=IN_STEER_str,
 	[IN_THROTTLE]=IN_THROTTLE_str,

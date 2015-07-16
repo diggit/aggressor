@@ -29,12 +29,15 @@
 	#define  IN_NORM 1000
 #endif
 
-
-
-#ifndef INPUT_TRIM_USER_MULTIPLIER
-	#define INPUT_TRIM_USER_MULTIPLIER 1
+#if !defined(IN_COUNT) ||  IN_COUNT<=0
+	#error "IN_COUNT must be greather than 1"
 #endif
-#define INPUT_TRIM_MULTIPLIER (IN_NORM/(PPM_PULSE_DEFLECTION)*PPM_ONE_US*INPUT_TRIM_USER_MULTIPLIER)//multiply by N to align with 1uS resolution
+
+
+#ifndef IN_TRIM_USER_MULTIPLIER
+	#define IN_TRIM_USER_MULTIPLIER 1
+#endif
+#define INPUT_TRIM_MULTIPLIER (IN_NORM/(PPM_PULSE_DEFLECTION)*PPM_ONE_US*IN_TRIM_USER_MULTIPLIER)//multiply by N to align with 1uS resolution
 
 
 typedef struct{
@@ -72,8 +75,8 @@ typedef input *input_p;
 
 extern int8_t in_alt_levels[IN_LEVELING_MAX_LEVELS];
 
-extern input inputs[HW_INPUTS];
-extern const char *input_names [HW_INPUTS];
+extern input inputs[IN_COUNT];
+extern const char *input_names [IN_COUNT];
 
 void input_eval_all(void);
 

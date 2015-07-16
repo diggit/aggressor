@@ -142,7 +142,7 @@ void storage_model_store(uint8_t slot_num)
 		eeprom_update_block(&outputs[out_num],E8(addr),EAD_MODEL_OUTPUT_SIZE);
 		addr+=EAD_MODEL_OUTPUT_SIZE;
 	}
-	for (uint8_t in_num = 0; in_num < HW_INPUTS; in_num++)
+	for (uint8_t in_num = 0; in_num < IN_COUNT; in_num++)
 	{
 		eeprom_update_block(&inputs[in_num].model,E8(addr),EAD_MODEL_INPUT_SIZE);
 		addr+=EAD_MODEL_INPUT_SIZE;
@@ -173,7 +173,7 @@ uint8_t storage_model_load(uint8_t slot_num)
 		eeprom_read_block(&outputs[out_num],E8(addr),EAD_MODEL_OUTPUT_SIZE);
 		addr+=EAD_MODEL_OUTPUT_SIZE;
 	}
-	for (uint8_t in_num = 0; in_num < HW_INPUTS; in_num++)
+	for (uint8_t in_num = 0; in_num < IN_COUNT; in_num++)
 	{
 		eeprom_read_block(&inputs[in_num].model,E8(addr),EAD_MODEL_INPUT_SIZE);
 		addr+=EAD_MODEL_INPUT_SIZE;

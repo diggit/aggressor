@@ -13,7 +13,7 @@
 menu_items output_menu_items[PPM_OUTPUT_COUNT];
 menu_items output_inmix_items[PPM_OUTPUT_COUNT];
 
-menu_items input_menu_items[HW_INPUTS];
+menu_items input_menu_items[IN_COUNT];
 
 
 const char subtrim_str[] PROGMEM={"subtrim"};
@@ -255,7 +255,7 @@ menu_t _input_menu={
 void menu_structure_init(void)
 {
 	//setup name pointers
-	for (uint8_t n = 0; n < HW_INPUTS ; n++)
+	for (uint8_t n = 0; n < IN_COUNT ; n++)
 	{
 		input_menu_items[n].name=input_names[n];
 		output_inmix_items[n].name=input_names[n];

@@ -24,32 +24,24 @@
 	#define MODEL_MAX_NAME_LENGTH	8 //NOT including terminating 0
 
 	#define PPM_FREQUENCY		50
-
-	//#define BEEP_FREQ_MAX		5000
-
-	#define ADC_SAMPLES	10
-	#define ADC_DIVIDER	5  //oversample
-
-	#define HW_INPUTS			5
 	#define PPM_OUTPUT_COUNT	5
-
 	#define PPM_PULSE_CENTER	1500 // servo center position pulse length
 	#define PPM_PULSE_DEFLECTION	500
 
+	//#define BEEP_FREQ_MAX		5000
 
-	#define VCC_MAX_VOLTAGE_mV	24400
+	#define ADC_SAMPLES			10
+	#define ADC_DIVIDER			5  //oversample
 
 	//normalization constant for analog inputs
 	//eg. if 1000, value of input will be normalized to be within range -1000 , 1000
-	#define IN_NORM	3000
+	#define IN_NORM				3000
+	#define IN_COUNT			5
+	#define IN_TRIM_USER_MULTIPLIER	1
 
-	#define OUTPUT_SUBTRIM_PATH_DIV	10
-	// #define OUTPUT_FORCE_1US_RESOLUTION
+	#define VCC_MAX_VOLTAGE_mV	24400
 
-	#define INPUT_TRIM_USER_MULTIPLIER	1
 	#define OUTPUT_SUBTRIM_USER_MULTIPLIER 1
-
-
 
 	//uncomment if LCD row should be inverted on every update
 	// #define LCD_UPDATE_DEBUG
@@ -60,12 +52,11 @@
 
 	#define MENU_HEADER_LENGTH	8 // in characters (6px)
 
-
-	// config
+	//mow many systick cycles tooks 1 second
 	#define ONE_SECOND_TICK_CALIBRATION	PPM_FREQUENCY //50
 
 	//clock have prescaler separately
-	#define CLOCK_PRESCALE PPM_FREQUENCY //50
+	#define CLOCK_PRESCALE ONE_SECOND_TICK_CALIBRATION //50
 
 	typedef struct {
 		uint8_t low_batt;

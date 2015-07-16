@@ -89,7 +89,7 @@ void output_load_defaults(void)
 	// int8_t	epa_min;
 	// int8_t	epa_max;
 	// uint16_t	value;
-	// int8_t	in_coef[HW_INPUTS];
+	// int8_t	in_coef[IN_COUNT];
 	// uint8_t invert:1;
 
 	for (size_t ch = 0; ch < array_length(outputs); ch++) {
@@ -97,7 +97,7 @@ void output_load_defaults(void)
 		outputs[ch].epa_min=OUTPUT_EPA_MIN;
 		outputs[ch].epa_max=OUTPUT_EPA_MAX;
 		outputs[ch].value=1500;
-		for (size_t coef = 0; coef < HW_INPUTS; coef++) //bind first in to first out and so on
+		for (size_t coef = 0; coef < IN_COUNT; coef++) //bind first in to first out and so on
 		{
 			if(ch==coef)
 				outputs[ch].in_coef[coef]=10;
@@ -121,7 +121,7 @@ void output_eval_all()
 		sum_buffer=0;
 		divider=0;
 
-		for (uint8_t in_num = 0; in_num < HW_INPUTS; in_num++)
+		for (uint8_t in_num = 0; in_num < IN_COUNT; in_num++)
 		{
 			divider+=uabs(out->in_coef[in_num]);
 
@@ -153,7 +153,7 @@ void output_eval_all()
 		//(PPM_PULSE_DEFLECTION * PPM_ONE_US)*sum_buffer
 		//and/or
 		//(PPM_PULSE_DEFLECTION * PPM_ONE_US)*sum_buffer / divider * epa
-		//highest value of sum_buffer is (IN_NORM*OUTPUT_INMIX_COEF_MAX*HW_INPUTS)
+		//highest value of sum_buffer is (IN_NORM*OUTPUT_INMIX_COEF_MAX*IN_COUNT)
 	}
 }
 

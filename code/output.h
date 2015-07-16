@@ -28,11 +28,11 @@
 	#endif
 	#define OUTPUT_SUBTRIM_MULTIPLIER	(IN_NORM/(PPM_PULSE_DEFLECTION)*PPM_ONE_US*OUTPUT_SUBTRIM_USER_MULTIPLIER)
 
-	#if (PPM_PULSE_DEFLECTION * PPM_ONE_US)* (IN_NORM*OUTPUT_INMIX_COEF_MAX*HW_INPUTS) / (OUTPUT_INMIX_COEF_MAX*HW_INPUTS) * OUTPUT_EPA_MAX >= INT32_MAX
+	#if (PPM_PULSE_DEFLECTION * PPM_ONE_US)* (IN_NORM*OUTPUT_INMIX_COEF_MAX*IN_COUNT) / (OUTPUT_INMIX_COEF_MAX*IN_COUNT) * OUTPUT_EPA_MAX >= INT32_MAX
 		#error "possible overflow detected! try decreasing IN_NORM, you max try to edit formula in output.c 'out->value =...'"
 	#endif
 
-	#if (PPM_PULSE_DEFLECTION * PPM_ONE_US)* (IN_NORM*OUTPUT_INMIX_COEF_MAX*HW_INPUTS) >= INT32_MAX
+	#if (PPM_PULSE_DEFLECTION * PPM_ONE_US)* (IN_NORM*OUTPUT_INMIX_COEF_MAX*IN_COUNT) >= INT32_MAX
 		#error "possible overflow detected! try decreasing OUTPUT_INMIX_COEF_MAX or IN_NORM, you max try to edit formula in output.c 'out->value =...'"
 	#endif
 
@@ -41,7 +41,7 @@
 		int8_t	epa_min;
 		int8_t	epa_max;
 		uint16_t	value;
-		int8_t	in_coef[HW_INPUTS];
+		int8_t	in_coef[IN_COUNT];
 	}output_t;
 
 	typedef output_t *output_p;
