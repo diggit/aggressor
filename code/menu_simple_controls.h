@@ -17,5 +17,6 @@
 	void menu_lowbatt_start(void);
 	void menu_lowbatt_draw(uint8_t val);
 	char* menu_lowbatt_getval(uint8_t unused);
+	void menu_lowbatt_flush(void);
 
 #endif

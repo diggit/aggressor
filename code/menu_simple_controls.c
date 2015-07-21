@@ -3,6 +3,7 @@
 #include "ppm.h"
 #include "misc.h"
 #include "3310_routines.h"
+#include "hardware.h"
 
 void menu_beep_toggle(void)
 {
@@ -42,7 +43,7 @@ char* menu_ppm_get_val(uint8_t unused)
 
 void menu_lowbatt_start(void)
 {
-	menu_simple_lister_start(&config.low_batt,0, VCC_MAX_VOLTAGE_mV/100, menu_lowbatt_draw);
+	menu_simple_lister_start_ex(&config.low_batt,0, BATTERY_MAX_VOLTAGE_mV/100, menu_lowbatt_draw,menu_lowbatt_flush);
 }
 void menu_lowbatt_draw(uint8_t val)
 {
@@ -51,4 +52,8 @@ void menu_lowbatt_draw(uint8_t val)
 char* menu_lowbatt_getval(uint8_t unused)
 {
 	return itoa_dec(config.low_batt,MENU_NUMBER_LENGTH,1);
+}
+void menu_lowbatt_flush(void)
+{
+	battery_trigger=0;//clear low batt trigger, makes sense when was triggered
 }
