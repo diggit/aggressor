@@ -21,6 +21,8 @@
 
 	volatile beep_setup_t scheduled_beep;
 
+	extern uint8_t battery_trigger;
+
 	void gpio_init(void);
 	void beep_init(void);
 	void beep_start(void);

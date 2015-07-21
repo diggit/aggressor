@@ -39,7 +39,8 @@
 	#define IN_COUNT			5
 	#define IN_TRIM_USER_MULTIPLIER	1
 
-	#define VCC_MAX_VOLTAGE_mV	24400
+	#define BATTERY_MAX_VOLTAGE_mV	24400
+	#define BATTERY_TRIGGER_DEGLITCH	5//how many consecutivr samples (1sample per second) must confirm BATTERY LOW VOLTAGE
 
 	#define OUTPUT_SUBTRIM_USER_MULTIPLIER 1
 

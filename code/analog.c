@@ -22,7 +22,7 @@ volatile uint16_t adc_measured[ADC_channel_count];
 uint8_t adc_battery_voltage;
 
 
-uint16_t adc_battery_max=VCC_MAX_VOLTAGE_mV;//max measureable voltage in mV
+uint16_t adc_battery_max=BATTERY_MAX_VOLTAGE_mV;//max measureable voltage in mV
 
 
 //setup adc, one shot, slow,

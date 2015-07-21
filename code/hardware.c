@@ -3,7 +3,7 @@
 #include "storage.h"
 #include "misc.h"
 
-
+uint8_t battery_trigger;
 
 void gpio_init()
 {

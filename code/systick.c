@@ -59,23 +59,28 @@ void systick()
 	//thins that should happen every second
 	if(loop==0)
 	{
-		screen_battery_draw();
+		screen_battery_draw(0);
+		if(adc_battery_voltage<config.low_batt && battery_trigger<BATTERY_TRIGGER_DEGLITCH)//when low voltage measured and triggert deglitch not reached
+		{
+			battery_trigger++;
+		}
+		else if(battery_trigger<BATTERY_TRIGGER_DEGLITCH)//when voltage OK, and trigger have not reached deglitch value yet
+		{
+			battery_trigger=0;
+		}
 	}
-	if(adc_battery_voltage<config.low_batt ) //battery alarm
+	if(battery_trigger>=BATTERY_TRIGGER_DEGLITCH)
 	{
+		//this is LOW batt tune
 		if(loop==ONE_SECOND_TICK_CALIBRATION/10)
 			beep(2000,60);
 		else if(loop==2*ONE_SECOND_TICK_CALIBRATION/10)
 			beep(1000,60);
 		else if(loop==3*ONE_SECOND_TICK_CALIBRATION/10)
 			beep(2000,150);
-	}
-	if(loop==ONE_SECOND_TICK_CALIBRATION/2) //same here, just shifted about 1/2 second
-	{
-		if(adc_battery_voltage<config.low_batt)
-		{
-			LCD_writeString_XY(59,0,itoa_dec(adc_battery_voltage,3,1),OVERWRITE|INVERT);
-		}
+
+		if(loop==ONE_SECOND_TICK_CALIBRATION/2)
+			screen_battery_draw(INVERT);
 	}
 
 	//call clock to handle tick (or not)
