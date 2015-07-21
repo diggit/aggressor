@@ -20,6 +20,6 @@
 	void screen_schedule_redraw(uint8_t delay_ds);
 	void screen_redraw(void);
 	void screen_template_draw(void);
-	void screen_battery_draw(void);
+	void screen_battery_draw(uint8_t addflag);
 
 #endif
