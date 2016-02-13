@@ -17,7 +17,7 @@
 #include "hardware.h"
 #include "systick.h"
 #include "menu.h"
-#include "idle.h"
+#include "homescreen.h"
 #include "misc.h"
 #include "output.h"
 
@@ -80,7 +80,7 @@ int main (void)
 	menu_structure_init();
 
 
-	idle_start();
+	homescreen_start();
 
 	ppm_init();//start systick too
 
@@ -94,26 +94,26 @@ int main (void)
 	}
 }
 
-ISR(USART_RXC_vect)
-{
-	uint8_t buff=UDR;
-	if(buff=='R')//reset
-	{
-		Reset_AVR();//goodbye
-	}
-	else if(buff=='D')//dump
-	{
-		storage_dump_eeprom();
-		beep(BEEP_NOTIF);
-	}
-	else if(buff=='E')//erase
-	{
-		storage_wipe_all();
-		beep(BEEP_NOTIF);
-	}
-	else if(buff=='S')//save
-	{
-		storage_all_store();
-		beep(BEEP_NOTIF);
-	}
-}
+// ISR(USART_RXC_vect)
+// {
+// 	uint8_t buff=UDR;
+// 	if(buff=='R')//reset
+// 	{
+// 		Reset_AVR();//goodbye
+// 	}
+// 	else if(buff=='D')//dump
+// 	{
+// 		storage_dump_eeprom();
+// 		beep(BEEP_NOTIF);
+// 	}
+// 	else if(buff=='E')//erase
+// 	{
+// 		storage_wipe_all();
+// 		beep(BEEP_NOTIF);
+// 	}
+// 	else if(buff=='S')//save
+// 	{
+// 		storage_all_store();
+// 		beep(BEEP_NOTIF);
+// 	}
+// }

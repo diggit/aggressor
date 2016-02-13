@@ -4,6 +4,7 @@
 #include "menu_outputs.h"
 #include "menu_simple_controls.h"
 #include "menu_model.h"
+#include "menu_telemetry.h"
 #include "ppm.h"
 #include "storage.h"
 #include "misc.h"
@@ -85,6 +86,7 @@ const char ppm_out_str[] PROGMEM={"PPM out"};
 const char beep_str[] PROGMEM={"BEEP"};
 const char beep_btn_str[] PROGMEM={"BEEP btn"};
 const char lowbatt_str[] PROGMEM={"LOW BATT"};
+const char telemetry_str[] PROGMEM={"tlmtry"};
 
 menu_items main_menu_itemss[]=
 {
@@ -105,6 +107,10 @@ menu_items main_menu_itemss[]=
 		.name=ppm_out_str,
 		.handler_func=menu_ppm_toggle,
 		.get_value=menu_ppm_get_val
+	},
+	{
+		.name=telemetry_str,
+		.submenu=&telemetry_menu
 	},
 	{
 		.name=beep_str,
@@ -197,6 +203,28 @@ menu_items _input_items[]=
 	}
 };
 
+const char a1RNG_str[] PROGMEM={"A1 RNG"};
+const char a2RNG_str[] PROGMEM={"A2 RNG"};
+
+menu_items telemetry_menu_items[]=
+{
+	{
+		.name=telemetry_str,
+		.get_value=menu_telemetry_get_val,
+		.handler_func=menu_telemetry_toggle
+	},
+	{
+		.name=a1RNG_str,
+		.get_value=menu_telemetry_analog_A1_get_val,
+		.handler_func=menu_telemetry_analog_A1_start
+	},
+	{
+		.name=a2RNG_str,
+		.get_value=menu_telemetry_analog_A2_get_val,
+		.handler_func=menu_telemetry_analog_A2_start
+	}
+};
+
 const char menu_str[] PROGMEM={"MENU"};
 const char outs_str[] PROGMEM={"OUTS"};
 const char ins_str[] PROGMEM={"INS"};
@@ -250,6 +278,11 @@ menu_t leveling_input_menu={
 menu_t _input_menu={
 	.items=_input_items,
 	.items_total=array_length(_input_items)
+};
+
+menu_t telemetry_menu={
+	.items=telemetry_menu_items,
+	.items_total=array_length(telemetry_menu_items)
 };
 
 void menu_structure_init(void)

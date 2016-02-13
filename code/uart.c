@@ -72,7 +72,7 @@ void uart_init(void)
 	UCSRB = (1<<RXEN);
 #endif
 
-#if (defined RXEN && defined UART_RX_INT_EN)
+#if (defined UART_RX && defined UART_RX_INT_EN)
 	UCSRB |= (1<<RXCIE); //enable RX interrupt
 #endif
 

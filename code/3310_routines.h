@@ -47,6 +47,8 @@
     #define RES_MAX_X       (HW_COLUMNS-1)
     #define RES_MAX_Y       (HW_ROWS*8-1)
 
+    #define CHAR_WIDTH  6//how many columns 1 char takes (incl space cols)
+
     uint8_t lcd_buffer[HW_ROWS][HW_COLUMNS];
 
 

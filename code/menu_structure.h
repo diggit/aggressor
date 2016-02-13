@@ -28,7 +28,7 @@
 
 	extern menu_t main_menu;
 
-	menu_t main_menu, output_menu, input_menu, output_properties_menu, input_properties_menu, output_inmix_menu, model_menu,leveling_input_menu,_input_menu;
+	menu_t main_menu, output_menu, input_menu, output_properties_menu, input_properties_menu, output_inmix_menu, model_menu,leveling_input_menu,_input_menu, telemetry_menu;
 
 	void menu_structure_init(void);
 

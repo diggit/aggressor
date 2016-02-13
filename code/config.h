@@ -17,7 +17,7 @@
 	#define FOSC 16000000UL
 
 	#define BAUD 9600UL
-	#define UART_TX
+	#define UART_TX //no data to RF, but debug
 	#define UART_RX
 	#define UART_RX_INT_EN
 

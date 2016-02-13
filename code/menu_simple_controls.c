@@ -8,7 +8,7 @@
 void menu_beep_toggle(void)
 {
 	config.beep ^= 1;
-	menu_return();
+	menu_return();//immediately return to menu after toggling
 }
 
 char* menu_beep_get_val(uint8_t unused)
@@ -20,7 +20,7 @@ char* menu_beep_get_val(uint8_t unused)
 void menu_beep_keys_toggle(void)
 {
 	config.beep_keys ^= 1;
-	menu_return();
+	menu_return();//immediately return to menu after toggling
 }
 
 char* menu_beep_keys_get_val(uint8_t unused)
@@ -30,8 +30,9 @@ char* menu_beep_keys_get_val(uint8_t unused)
 
 void menu_ppm_toggle(void)
 {
+	//FIXME: not wotking PPM toggling
 	ppm_status.enabled ^= 1;
-	menu_return();
+	menu_return();//immediately return to menu after toggling
 }
 
 char* menu_ppm_get_val(uint8_t unused)

@@ -31,6 +31,7 @@
 	#define ON_STR	0
 	#define OFF_STR 1
 
+	void menu_clear_tmp(void);
 	void menu_start(void);
 	void menu_return(void);
 	void menu_button_listener(uint8_t buttons);
@@ -54,10 +55,14 @@
 	extern mixed8_p lister_original_value_p;
 
 	typedef union{
-		uint8_t u8;
-		int8_t s8;
-		uint16_t u16;
-		int16_t s16;
+		volatile uint8_t u8;
+		volatile int8_t s8;
+		volatile uint8_t *u8p;
+		volatile int8_t *s8p;
+		volatile uint16_t u16;
+		volatile int16_t s16;
+		volatile uint16_t *u16p;
+		volatile int16_t *s16p;
 	} menu_tmp_t;
 	extern menu_tmp_t menu_tmp;
 

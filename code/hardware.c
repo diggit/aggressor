@@ -115,7 +115,7 @@ void run_poweroff_sequence()
 	uart_puts(pgmtoa(power_lost_str));
 	storage_all_store();
 	uart_puts(pgmtoa(eeprom_write_done_str_str));
-	PORTB&=~(1<<4);//off backlight
+	// PORTB&=~(1<<4);//off backlight
 	//delay_ms(100);
 	force_poweroff();
 }

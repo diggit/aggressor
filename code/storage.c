@@ -134,15 +134,15 @@ void storage_model_store(uint8_t slot_num)
 	eeprom_update_byte(E8(addr),MODEL_FLAG_VALID);
 	addr+=EAD_MODEL_FLAG_SIZE;
 
-	eeprom_update_block(model_name,E8(addr),EAD_MODEL_NAME_SIZE);
+	eeprom_update_block(model_name,E8(addr),EAD_MODEL_NAME_SIZE);//update current model name in eeprom
 	addr+=EAD_MODEL_NAME_SIZE;
 
-	for (uint16_t out_num=0;out_num<EAD_MODEL_OUTPUT_COUNT;out_num++)
+	for (uint16_t out_num=0;out_num<EAD_MODEL_OUTPUT_COUNT;out_num++)//update all current model ourput config
 	{
 		eeprom_update_block(&outputs[out_num],E8(addr),EAD_MODEL_OUTPUT_SIZE);
 		addr+=EAD_MODEL_OUTPUT_SIZE;
 	}
-	for (uint8_t in_num = 0; in_num < IN_COUNT; in_num++)
+	for (uint8_t in_num = 0; in_num < IN_COUNT; in_num++)//update current model input settings
 	{
 		eeprom_update_block(&inputs[in_num].model,E8(addr),EAD_MODEL_INPUT_SIZE);
 		addr+=EAD_MODEL_INPUT_SIZE;

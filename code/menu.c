@@ -3,7 +3,7 @@
 #include "3310_routines.h"
 #include "menu_structure.h"
 #include "systick.h"
-#include "idle.h"
+#include "homescreen.h"
 #include "misc.h"
 
 
@@ -21,6 +21,11 @@ menu_p menu;
 
 menu_tmp_t menu_tmp;
 
+void menu_clear_tmp()
+{
+	menu_tmp.u16p=0;//clearing pointer should be enough
+}
+
 //called to initialize main menu
 void menu_start()
 {
@@ -30,6 +35,7 @@ void menu_start()
 
 void menu_return()
 {
+	menu_clear_tmp();
 	fiftyps_periodical_call=NULL;
 	menu_state=MENU_STATE_MENU;
 	set_event_listener(menu_button_listener);
@@ -61,7 +67,7 @@ void menu_button_listener(uint8_t buttons)
 			if(menu->parent)//not NULL
 				menu_enter_parent_menu();
 			else
-				idle_start();
+				homescreen_return();
 			break;
 
 		case BTN_SEL:
@@ -79,7 +85,7 @@ void menu_button_listener(uint8_t buttons)
 			break;
 
 		case BTN_FUNC_LONG: //from any deep menu, there is a quick way to idle screen
-			idle_start();
+			homescreen_return();
 			break;
 	}
 }

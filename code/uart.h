@@ -21,11 +21,11 @@
 	#include "misc.h"
 
 	#ifndef FOSC
-	#	define FOSC 16000000UL
+	#error "unknown MCU clock frequency FOSC"
 	#endif
 
 	#ifndef BAUD
-	#	define BAUD 9600UL
+	#error "unknown uart baud rate BAUD"
 	#endif
 
 	#define ubrr_val (FOSC/(16*BAUD)-1)
