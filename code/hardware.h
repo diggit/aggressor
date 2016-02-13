@@ -17,6 +17,8 @@
 	typedef struct{
 		uint16_t frequency;
 		uint16_t duration_ms;
+		uint16_t pause_ms;
+		uint8_t repeats;
 	} beep_setup_t;
 
 	volatile beep_setup_t scheduled_beep;
@@ -25,9 +27,8 @@
 
 	void gpio_init(void);
 	void beep_init(void);
-	void beep_start(void);
-	void beep_stop_cond(void);
-	void beep(uint16_t frequency, uint16_t duration_ms);
+	void beep_process(void);
+	void beep(uint16_t frequency, uint16_t duration_ms, uint16_t pause_ms,uint8_t repeats);
 	void force_poweroff(void);
 	void run_poweroff_sequence(void);
 

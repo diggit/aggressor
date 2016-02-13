@@ -69,16 +69,19 @@
 
 	config_t config;
 
-	//							freq,duration
-	#define BEEP_IN_BOUNDS		2000,100
-	#define BEEP_IN_COMMON		1000,100
-	#define BEEP_TRIM_COMMON	1000,20
-	#define BEEP_TRIM_ZERO		2000,20
-	#define BEEP_KEY_LONG		500,20
-	#define BEEP_KEY_COMMON		300,20
-	#define BEEP_NOTIF			1000,40
-	#define BEEP_ERROR			500,1000
-	#define BEEP_CLOCK_MINUTE	1000,100
+	//							freq,duration,pause,repeats (over 1 basic repeat)
+	#define BEEP_IN_BOUNDS		2000,100,0,0
+	#define BEEP_IN_COMMON		1000,100,0,0
+	#define BEEP_TRIM_COMMON	1000,20,0,0
+	#define BEEP_TRIM_ZERO		2000,20,0,0
+	#define BEEP_KEY_LONG		500,20,0,0
+	#define BEEP_KEY_COMMON		300,20,0,0
+	#define BEEP_NOTIF			1000,40,0,0
+	#define BEEP_ERROR			500,1000,0,0
+	#define BEEP_CLOCK_MINUTE	1000,100,0,0
+	#define BEEP_TELEMETRY_LOST	3000,500,300,1
+	#define BEEP_TELEMETRY_RETURNED	4000,100,200,1
+	#define BEEP_LOW_BATTERY	1000,100,300,2
 
 	//#define STACK_MONITOR_ENABLED
 

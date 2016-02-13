@@ -51,6 +51,7 @@ void telemetry_process_frame(uint8_t raw[])
 			telemetry.rssi_TX=raw[4]/2;
 			telemetry.updated=1;//flag indicating fresh data
 			//rest were zeros
+			telemetry.enabled=1;
 			break;
 	}
 	//notify, that we have fresh telemetry data
@@ -104,5 +105,6 @@ ISR(USART_RXC_vect)
 	if(state==STATE_ERROR)
 	{
 		//inform about it somehow
+		state=STATE_IDLE;
 	}
 }

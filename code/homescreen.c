@@ -66,7 +66,10 @@ void homescreen_telemetry_draw()
 	if (telemetry.updated)
 	{
 		if(telemetry_timeout>=TELEMETRY_TIMEOUT)
+		{
 			LCD_clear_row(5);
+			beep(BEEP_TELEMETRY_RETURNED);
+		}
 		telemetry.updated=0;
 		telemetry_frame_type telemetry_copy=telemetry;//cache it, in case it gets overwritten during reading
 		telemetry_timeout=0;
@@ -86,6 +89,7 @@ void homescreen_telemetry_draw()
 		{
 			// LCD_clear_partial();
 			LCD_writeString_XY(5,5,pgmtoa(no_telemetry_str),OVERWRITE);
+			beep(BEEP_TELEMETRY_LOST);
 			telemetry_timeout++;//so we won't redraw static text every cycle, just once
 		}
 	}

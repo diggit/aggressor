@@ -20,7 +20,6 @@ uint8_t fps_divider=0;
 
 void systick()
 {
-	beep_stop_cond();
 	adc_measure_all();
 	input_eval_all();
 	trim_read_all();
@@ -29,7 +28,7 @@ void systick()
 	//until here, everything must be done earlier that next PPM cycle occur
 
 	//foloowing is time relaxed...
-	beep_start();
+	beep_process();
 
 	loop+=1;
 
@@ -72,12 +71,8 @@ void systick()
 	if(battery_trigger>=BATTERY_TRIGGER_DEGLITCH)
 	{
 		//this is LOW batt tune
-		if(loop==ONE_SECOND_TICK_CALIBRATION/10)
-			beep(2000,60);
-		else if(loop==2*ONE_SECOND_TICK_CALIBRATION/10)
-			beep(1000,60);
-		else if(loop==3*ONE_SECOND_TICK_CALIBRATION/10)
-			beep(2000,150);
+		if(loop==0)
+			beep(BEEP_LOW_BATTERY);
 
 		if(loop==ONE_SECOND_TICK_CALIBRATION/2)
 			screen_battery_draw(INVERT);

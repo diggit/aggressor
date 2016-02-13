@@ -55,14 +55,14 @@
 	extern mixed8_p lister_original_value_p;
 
 	typedef union{
-		volatile uint8_t u8;
-		volatile int8_t s8;
-		volatile uint8_t *u8p;
-		volatile int8_t *s8p;
-		volatile uint16_t u16;
-		volatile int16_t s16;
-		volatile uint16_t *u16p;
-		volatile int16_t *s16p;
+		uint8_t u8;
+		int8_t s8;
+		uint8_t volatile *u8p;
+		int8_t volatile *s8p;
+		uint16_t u16;
+		int16_t s16;
+		uint16_t volatile *u16p;
+		int16_t volatile *s16p;
 	} menu_tmp_t;
 	extern menu_tmp_t menu_tmp;
 

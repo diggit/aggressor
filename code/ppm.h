@@ -60,7 +60,7 @@
 
 	extern volatile uint16_t ppm_output[];
 
-	volatile typedef struct{
+	typedef struct{
 		uint8_t do_systick:1;
 		uint8_t enabled:1;
 	}ppm_status_t;

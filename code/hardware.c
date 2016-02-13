@@ -56,47 +56,72 @@ void beep_init()
 	//COM20 -> OC2 toggle on cmp match
 }
 
+#define STOP_BEEP_COUNTER() bit_clr(TCCR2,(1<<CS22)|(1<<CS21)|(1<<CS20))
+#define START_BEEP_COUNTER() bit_set(TCCR2,(1<<CS22))//32 prescaler
 
-void beep_start()
+#define BEEP_PHASE_STOP		0
+#define BEEP_PHASE_START	1
+#define BEEP_PHASE_BEEP		2
+#define BEEP_PHASE_PAUSE	3
+uint8_t beep_phase=0;
+uint16_t beep_duration=0;
+
+void beep_process()
 {
-	if(scheduled_beep.duration_ms==0 || scheduled_beep.frequency==0)//if not valid settings
+	if(beep_phase==BEEP_PHASE_STOP)
 		return;
 
-	if( TCCR2 & ((1<<CS22)|(1<<CS21)|(1<<CS20)) )//if any clock input to counter ->already running
-		return;
-
-	TCNT2=0;//clear counter
-
-	scheduled_beep.frequency=crop(scheduled_beep.frequency,BEEP_FREQ_MIN,BEEP_FREQ_MAX);
-	//prescaler 32 is ok for frequency upto 2kHz, higher freqs. has too low resolution
-	OCR2=(uint32_t)FOSC/((uint32_t)2*scheduled_beep.frequency*32)-1;
-	TCCR2= (TCCR2 & ~((1<<CS22)|(1<<CS21)|(1<<CS20))) | (1<<CS22);//32 prescaler
-}
-
-void beep_stop_cond()
-{
-
-	if( !( TCCR2 & ((1<<CS22)|(1<<CS21)|(1<<CS20)) ))//if no clock input to counter
-		return;
-
-	if(scheduled_beep.duration_ms>=BEEP_TIME_STEP)
+	else if(beep_phase==BEEP_PHASE_START)//first call, we have setup for beep, but not yet running
 	{
-		scheduled_beep.duration_ms-=BEEP_TIME_STEP;
+		OCR2=(uint32_t)FOSC/((uint32_t)2*scheduled_beep.frequency*32)-1;//set frequency to HW timer
+		TCNT2=0;//clear counter
+		beep_phase=BEEP_PHASE_BEEP;
+		START_BEEP_COUNTER();
+		beep_duration=0;
 	}
 	else
 	{
-		bit_clr(TCCR2,(1<<CS22)|(1<<CS21)|(1<<CS20));
-		scheduled_beep.duration_ms=0;
-		scheduled_beep.frequency=0;
+		if(scheduled_beep.duration_ms>beep_duration)//phase not yet finished, mabe next cycle...
+		{
+			beep_duration+=BEEP_TIME_STEP;
+		}
+		else//end of some phase
+		{
+			beep_duration=0;
+			if(beep_phase==BEEP_PHASE_BEEP)//end of beep phase
+			{
+				STOP_BEEP_COUNTER();//stop beeping
+				TCNT2=0;//clear counter
+				if(scheduled_beep.repeats>0)//if there are more repeats
+				{
+					beep_phase=BEEP_PHASE_PAUSE;
+				}
+				else//this is end of beep(sequence)
+					beep_phase=BEEP_PHASE_STOP;
+			}
+			else if(beep_phase==BEEP_PHASE_PAUSE)//end of pause phase
+			{
+				beep_phase=BEEP_PHASE_BEEP;//after pahuse, there is always beep
+				START_BEEP_COUNTER();
+				scheduled_beep.repeats--;
+			}
+		}
 	}
 }
 
-void beep(uint16_t frequency, uint16_t duration_ms)
+
+void beep(uint16_t frequency, uint16_t duration_ms, uint16_t pause_ms,uint8_t repeats)
 {
 	if (!(config.beep))//ignore beep calls when beep disabled
 		return;
-	scheduled_beep.frequency=frequency;
+	if(beep_phase!=BEEP_PHASE_STOP)//terminate runing beep
+		STOP_BEEP_COUNTER();
+	scheduled_beep.frequency=crop(frequency,BEEP_FREQ_MIN,BEEP_FREQ_MAX);;
 	scheduled_beep.duration_ms=duration_ms;
+	scheduled_beep.pause_ms=pause_ms;
+	scheduled_beep.repeats=repeats;
+	beep_phase=BEEP_PHASE_START;
+
 }
 
 const char goodbye_str[] PROGMEM={"goodbye..."};
