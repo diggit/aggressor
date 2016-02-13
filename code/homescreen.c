@@ -25,30 +25,69 @@ uint8_t (*homescreens[])(void )={\
 	homescreen_input_bars_set,\
 	homescreen_telemetry_set};
 
+uint8_t telemetry_timeout=0;
 
 //here starts setters and custom homescreen drawers itself----------------------------
 uint8_t homescreen_telemetry_set()
 {
 	if (telemetry.enabled)//check if telemetry is available
 	{
-		screen.redraw=1;
-		fiftyps_periodical_call=homescreen_telemetry;
+		if(telemetry.updated!=1)//if there are no data ready, set timeout, NO TELEMETRY message will be shown immediately
+			telemetry_timeout=TELEMETRY_TIMEOUT;
+		homescreen_telemetry_draw_template();
+		fiftyps_periodical_call=homescreen_telemetry_draw;
 		return 1;
 	}
 	else
 		return 0;
 }
 
-void homescreen_telemetry()
+
+const char RX_str[] PROGMEM={"RX:"};
+const char TX_str[] PROGMEM={"TX:"};
+void homescreen_telemetry_draw_template()
+{
+	// LCD_clear_partial();
+	LCD_gotoXY(CHAR_SPACE(4),2);
+	LCD_writeChar('V',OVERWRITE);
+
+	LCD_gotoXY(CHAR_SPACE(13),2);
+	LCD_writeChar('V',OVERWRITE);
+
+	LCD_writeString_XY(0,3,pgmtoa(TX_str),OVERWRITE);
+
+	LCD_writeString_XY(CHAR_SPACE(7),3,pgmtoa(RX_str),OVERWRITE);
+
+}
+
+const char no_telemetry_str[] PROGMEM={"NO TELEMETRY"};
+void homescreen_telemetry_draw()
 {
 	if (telemetry.updated)
 	{
+		if(telemetry_timeout>=TELEMETRY_TIMEOUT)
+			LCD_clear_row(5);
 		telemetry.updated=0;
 		telemetry_frame_type telemetry_copy=telemetry;//cache it, in case it gets overwritten during reading
-		LCD_writeString_XY(10,2,itoa_dec( telemetry_analog_convert_value(telemetry_copy.analog_A1.raw,telemetry_copy.analog_A1.range),4,1),OVERWRITE);
-		LCD_writeString_XY(10,3,itoa_dec( telemetry_analog_convert_value(telemetry_copy.analog_A2.raw,telemetry_copy.analog_A2.range),4,1),OVERWRITE);
-		LCD_writeString_XY(10,4,itoa(telemetry_copy.rssi_TX,3),OVERWRITE);
-		LCD_writeString_XY(10,5,itoa(telemetry_copy.rssi_RX,3),OVERWRITE);
+		telemetry_timeout=0;
+		LCD_writeString_XY(CHAR_SPACE(0),2,itoa_dec( telemetry_analog_convert_value(telemetry_copy.analog_A1.raw,telemetry_copy.analog_A1.range),4,1),OVERWRITE);
+
+		LCD_writeString_XY(CHAR_SPACE(9),2,itoa_dec( telemetry_analog_convert_value(telemetry_copy.analog_A2.raw,telemetry_copy.analog_A2.range),4,1),OVERWRITE);
+
+		LCD_writeString_XY(CHAR_SPACE(3),3,itoa(telemetry_copy.rssi_TX,3),OVERWRITE);
+		LCD_writeString_XY(CHAR_SPACE(10),3,itoa(telemetry_copy.rssi_RX,3),OVERWRITE);
+	}
+	else
+	{
+		if(telemetry_timeout<TELEMETRY_TIMEOUT)
+			telemetry_timeout++;
+
+		else if(telemetry_timeout==TELEMETRY_TIMEOUT)
+		{
+			// LCD_clear_partial();
+			LCD_writeString_XY(5,5,pgmtoa(no_telemetry_str),OVERWRITE);
+			telemetry_timeout++;//so we won't redraw static text every cycle, just once
+		}
 	}
 }
 
@@ -154,6 +193,7 @@ void homescreen_draw()
 {
 	screen_template_draw();
 	homescreen_template_draw();
+	homescreens[current_homescreen_num]();//call setter again, he might draw template
 	if(fiftyps_periodical_call!=NULL)
 		fiftyps_periodical_call();
 }

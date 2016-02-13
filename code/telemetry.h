@@ -19,6 +19,12 @@
 
 	#include <inttypes.h>
 
+	#include "config.h"
+
+	#ifndef	TELEMETRY_TIMEOUT
+		#define TELEMETRY_TIMEOUT	10
+	#endif
+
 	#define TELEMETRY_ANALOG_MAX	255
 	#define TELEMETRY_ANALOG_MAX_RANGE	TELEMETRY_ANALOG_MAX
 

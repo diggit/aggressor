@@ -49,6 +49,8 @@
 
     #define CHAR_WIDTH  6//how many columns 1 char takes (incl space cols)
 
+    #define CHAR_SPACE(N)   (CHAR_WIDTH*N)
+
     uint8_t lcd_buffer[HW_ROWS][HW_COLUMNS];
 
 

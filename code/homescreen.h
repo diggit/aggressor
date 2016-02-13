@@ -9,7 +9,8 @@
 	void	homescreen_input_bars(void);
 
 	uint8_t	homescreen_telemetry_set(void);
-	void	homescreen_telemetry(void);
+	void	homescreen_telemetry_draw_template(void);
+	void	homescreen_telemetry_draw(void);
 
 	#define homescreen_next()	homescreen_switch(1)
 	#define homescreen_prev()	homescreen_switch(-1)
