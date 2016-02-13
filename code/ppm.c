@@ -37,7 +37,7 @@ ISR(TIMER1_COMPA_vect)
 {
 	if(edge==EDGE_RISING)
 	{
-		TCCR1A=(1<<COM1A0);//next COMPA interrupt will CLEAR OC1A
+		TCCR1A=(1<<COM1A1);//next COMPA interrupt will CLEAR OC1A
 		edge=EDGE_FALLING;
 		OCR1A+= POSITIVE_PULSE_LENGTH*PPM_ONE_US;//clear PPM after constant time after PPM is set
 	}
