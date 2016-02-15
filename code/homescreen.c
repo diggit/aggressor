@@ -47,11 +47,11 @@ const char RX_str[] PROGMEM={"RX:"};
 const char TX_str[] PROGMEM={"TX:"};
 void homescreen_telemetry_draw_template()
 {
-	// LCD_clear_partial();
+	LCD_clear_partial();
 	LCD_gotoXY(CHAR_SPACE(4),2);
 	LCD_writeChar('V',OVERWRITE);
 
-	LCD_gotoXY(CHAR_SPACE(13),2);
+	LCD_gotoXY(CHAR_SPACE(11),2);
 	LCD_writeChar('V',OVERWRITE);
 
 	LCD_writeString_XY(0,3,pgmtoa(TX_str),OVERWRITE);
@@ -67,18 +67,21 @@ void homescreen_telemetry_draw()
 	{
 		if(telemetry_timeout>=TELEMETRY_TIMEOUT)
 		{
-			LCD_clear_row(5);
 			beep(BEEP_TELEMETRY_RETURNED);
+			homescreen_telemetry_draw_template();
 		}
 		telemetry.updated=0;
 		telemetry_frame_type telemetry_copy=telemetry;//cache it, in case it gets overwritten during reading
 		telemetry_timeout=0;
 		LCD_writeString_XY(CHAR_SPACE(0),2,itoa_dec( telemetry_analog_convert_value(telemetry_copy.analog_A1.raw,telemetry_copy.analog_A1.range),4,1),OVERWRITE);
 
-		LCD_writeString_XY(CHAR_SPACE(9),2,itoa_dec( telemetry_analog_convert_value(telemetry_copy.analog_A2.raw,telemetry_copy.analog_A2.range),4,1),OVERWRITE);
+		LCD_writeString_XY(CHAR_SPACE(7),2,itoa_dec( telemetry_analog_convert_value(telemetry_copy.analog_A2.raw,telemetry_copy.analog_A2.range),4,1),OVERWRITE);
 
 		LCD_writeString_XY(CHAR_SPACE(3),3,itoa(telemetry_copy.rssi_TX,3),OVERWRITE);
 		LCD_writeString_XY(CHAR_SPACE(10),3,itoa(telemetry_copy.rssi_RX,3),OVERWRITE);
+		//signal plotting
+		LCD_plot_roll(0,3,HW_COLUMNS/2-1,2,telemetry_copy.rssi_TX,0,128,INVERT);
+		LCD_plot_roll(HW_COLUMNS/2+1,3,HW_COLUMNS/2-1,2,telemetry_copy.rssi_RX,0,128,INVERT);
 	}
 	else
 	{
@@ -99,9 +102,11 @@ void homescreen_telemetry_draw()
 uint8_t homescreen_input_bars_set()
 {
 	fiftyps_periodical_call=homescreen_input_bars;
-	//FIXME: draw clock when displayed after clear, even whne not running
 	return 1;//we are alway able to show input bars screen
 }
+
+// uint8_t test_data[]={31,30,31,32,33,34,35,36,37,36};
+// uint8_t test=0;
 void homescreen_input_bars()
 {
 	LCD_drawBar(10,40,64,8 ,(int32_t)(IN_NORM+inputs[IN_STEER].runtime.value)/(2*IN_NORM/100),BAR_HORIZONTAL);//bottom horizontal bar
@@ -109,6 +114,19 @@ void homescreen_input_bars()
 	LCD_drawBar(76,22,8 ,26,-(int32_t)(IN_NORM+inputs[IN_DR].runtime.value)/(2*IN_NORM/100),BAR_VERTICAL);//right vertical bar
 	LCD_drawBar(0 ,12,20,8 ,(int32_t)(IN_NORM+inputs[IN_THUMB].runtime.value)/(2*IN_NORM/100),BAR_HORIZONTAL);//left horizontal bar
 	LCD_drawBar(HW_COLUMNS-20,12,20,8,(int32_t)(IN_NORM+inputs[IN_ALT].runtime.value)/(2*IN_NORM/100),BAR_HORIZONTAL);//right horizontal bar
+
+
+	// LCD_plot_array(20,2,10,3,test_data,array_length(test_data),0,30,38,INVERT);
+
+	// test++;
+	// if(test%16==0)
+	// {
+	// 	if(test==array_length(test_data)*16)
+	// 		test=0;
+	// 	LCD_plot_roll(20,2,20,2,test_data[test/16],30,38,INVERT);
+	//
+	// }
+
 
 	if(screen.redraw)//in case of forced redraw, draw clock every time
 		clock_draw();
