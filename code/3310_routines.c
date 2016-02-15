@@ -603,6 +603,103 @@ void LCD_writeString_XY ( uint8_t x, uint8_t y, const char *string, uint8_t flag
 		LCD_writeChar( *string++,flags );
 }
 
+
+void LCD_plot_array(uint8_t x,uint8_t y, uint8_t width, uint8_t height, uint8_t data[], uint8_t data_length, uint8_t data_start, uint8_t min, uint8_t max, uint8_t flags)
+{
+	uint8_t line_bottom=0, line_top=255, line_height; //thresholds to check if data dot belongs to this line
+	uint8_t data_pos;
+	uint8_t shifted_data;
+
+	const uint8_t mask=(flags&INVERT ? 0xFF:0x00);
+
+	line_bottom--;//because we set it to line_top+1 and at first run, wee need it to be 0
+
+	for(uint8_t line=0;line<height;line++)
+	{
+		// printf("line: %d\n",line);
+		data_pos=data_start;
+		line_bottom=line_top+1;//new bottom is previous top
+
+		if(line==height-1)
+			line_top=max-min;
+		else
+			line_top=(uint16_t)(max-min)*(1+line)/height;
+
+		line_height=line_top-line_bottom+1;
+
+		// printf(" B: %d, T: %d, H: %d\n",line_bottom, line_top, line_height);
+
+		for(uint8_t col=x;col<(width+x);col++)
+		{
+			// printf("  col: %d",col);
+			if(x+width-col<=data_length)
+			{
+				shifted_data=crop(data[data_pos],min,max)-min;//handle properly values out of range and remove min, to start from 0
+				// printf(" data: %2d",shifted_data);
+
+				if((shifted_data)>=line_bottom && (shifted_data)<=line_top )//data point belongs to this line
+				{
+					lcd_buffer[y+height-line][col]=mask ^ (1<<( 7- ((uint16_t)((shifted_data)-line_bottom)*8/line_height)) );
+					;
+				}
+				else
+				{
+					lcd_buffer[y+height-line][col]=mask;
+				}
+
+				if(data_pos<data_length-1)
+					data_pos++;
+				else
+					data_pos=0;
+			}
+			else
+			{
+				// printf(" no data\n");
+				lcd_buffer[y+height-line][col]=mask;
+			}
+		}
+		LCD_schedule_update(1<<(y+height-line));
+	}
+}
+
+void LCD_plot_roll(uint8_t x,uint8_t y, uint8_t width, uint8_t height, uint8_t data, uint8_t min, uint8_t max, uint8_t flags)
+{
+	uint8_t line_bottom=0, line_top=255; //thresholds to check if data dot belongs to this line
+	uint8_t shifted_data;
+
+	const uint8_t mask=(flags&INVERT ? 0xFF:0x00);
+
+	line_bottom--;//because we set it to line_top+1 and at first run, wee need it to be 0
+
+	uint8_t *buffer_p;
+
+	for(uint8_t line=0;line<height;line++)
+	{
+		line_bottom=line_top+1;//new bottom is previous top
+
+		if(line==height-1)
+			line_top=max-min;
+		else
+			line_top=(uint16_t)(max-min)*(1+line)/height;
+
+
+
+		// for(uint8_t col=0;col<(width-1);col++)//we will copy content from col+1 to col (+1 because we don't wanna go youtside of range)
+		for(buffer_p=&lcd_buffer[y+height-line][x]; buffer_p < &lcd_buffer[y+height-line][x+width-1]; buffer_p++)
+		{
+			*buffer_p=*(buffer_p+1);
+		}
+		//and fill last column with new data
+		// buffer_p--;
+		shifted_data=crop(data,min,max)-min;//handle properly values out of range and remove min, to start from 0
+		if((shifted_data)>=line_bottom && (shifted_data)<=line_top )//data point belongs to this line
+			*buffer_p=mask ^ (1<<( 7- ((uint16_t)( (shifted_data)-line_bottom)*8/(line_top-line_bottom+1) )) );
+		else
+			*buffer_p=mask;
+		LCD_schedule_update(1<<(y+height-line));
+	}
+}
+
 /*--------------------------------------------------------------------------------------------------
   Name         :  LCD_drawBorder
   Description  :  Draws rectangle border on the display
@@ -670,7 +767,7 @@ void LCD_drawHline( uint8_t X, uint8_t Y, int8_t width)
 }
 
 
-
+//TODO: LCD_drawRectangle check and cleanup
 void LCD_drawRectangle(uint8_t x_start, uint8_t y_start, int8_t width, int8_t height, uint8_t flags)
 {
 	if(width==0 || height==0)//nothing to draw
@@ -702,12 +799,12 @@ void LCD_drawRectangle(uint8_t x_start, uint8_t y_start, int8_t width, int8_t he
 	if(x_end>=HW_COLUMNS)
 	{
 		LCD_error.draw_outside=1;
-		x_end=RES_MAX_X;//limit max X to LCD
+		x_end=HW_COLUMNS-1;//limit max X to LCD
 	}
 	if(y_end>=HW_ROWS*8)
 	{
 		LCD_error.draw_outside=1;
-		y_end=RES_MAX_Y;
+		y_end=HW_ROWS*8-1;
 	}
 
 	uint8_t start_row=y_start/8;

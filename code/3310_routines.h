@@ -42,10 +42,11 @@
     #define SET_RST_PIN                PORTD |= RST_PIN
     #define CLEAR_RST_PIN              PORTD &= ~RST_PIN
 
-    #define HW_ROWS     6
-    #define HW_COLUMNS  84
-    #define RES_MAX_X       (HW_COLUMNS-1)
-    #define RES_MAX_Y       (HW_ROWS*8-1)
+    #define HW_ROWS     6//adressable lines
+    #define HW_LINES    (HW_ROWS*8) //pixel lines
+    #define HW_COLUMNS  84//addressable pixel columns
+    // #define RES_MAX_X       (HW_COLUMNS-1)
+    // #define RES_MAX_Y       (HW_ROWS*8-1)
 
     #define CHAR_WIDTH  6//how many columns 1 char takes (incl space cols)
 
@@ -60,6 +61,7 @@
 
 
     //draw flags
+    #define DEFAULT     0
     #define OVERWRITE   (1<<0)
     #define INVERT      (1<<1)
     #define FILL        (1<<2)
@@ -102,6 +104,8 @@
     void LCD_clear_header_text(void);
     void LCD_write_header_text(const char *string);
     void LCD_drawBar(uint8_t x_start, uint8_t y_start, int8_t width, int8_t height, int8_t perc, uint8_t bar_type);
+    void LCD_plot_array(uint8_t x,uint8_t y, uint8_t width, uint8_t height, uint8_t data[], uint8_t data_length, uint8_t data_start, uint8_t min, uint8_t max, uint8_t flags);
+    void LCD_plot_roll(uint8_t x,uint8_t y, uint8_t width, uint8_t height, uint8_t data, uint8_t min, uint8_t max, uint8_t flags);
     #define LCD_clear_row(S) LCD_clear_rows(1<<S)
 
 #endif  //  _3310_ROUTINES_H_
