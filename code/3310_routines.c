@@ -603,7 +603,8 @@ void LCD_writeString_XY ( uint8_t x, uint8_t y, const char *string, uint8_t flag
 		LCD_writeChar( *string++,flags );
 }
 
-
+//draw plot from arra(circular buffer)
+//vertical alignment limited to HW_ROWS (8pixels)
 void LCD_plot_array(uint8_t x,uint8_t y, uint8_t width, uint8_t height, uint8_t data[], uint8_t data_length, uint8_t data_start, uint8_t min, uint8_t max, uint8_t flags)
 {
 	uint8_t line_bottom=0, line_top=255, line_height; //thresholds to check if data dot belongs to this line
@@ -662,6 +663,9 @@ void LCD_plot_array(uint8_t x,uint8_t y, uint8_t width, uint8_t height, uint8_t 
 	}
 }
 
+//draw plot, uses framebuffer to roll content, every call makes all content to shit left and adds new column on right
+//(if framebuffer is changed between calls, changed content is rolled)
+//vertical alignment limited to HW_ROWS (8pixels)
 void LCD_plot_roll(uint8_t x,uint8_t y, uint8_t width, uint8_t height, uint8_t data, uint8_t min, uint8_t max, uint8_t flags)
 {
 	uint8_t line_bottom=0, line_top=255; //thresholds to check if data dot belongs to this line
