@@ -21,6 +21,8 @@
 	#define UART_RX
 	#define UART_RX_INT_EN
 
+	#define TELEMETRY_TIMEOUT	50
+
 	#define MODEL_MAX_NAME_LENGTH	8 //NOT including terminating 0
 
 	#define PPM_FREQUENCY		50
